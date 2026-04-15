@@ -1,0 +1,6 @@
+#define DEFAULT 0
+#define QWERTY 1
+#define MAC 2
+#define MOD 3
+#define KEYPAD 4
+#define TOOLS 5

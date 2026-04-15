@@ -1,4 +1,3 @@
 /firmware/*.uf2
 /nvim_session.vim
-/flake.lock
 /result
