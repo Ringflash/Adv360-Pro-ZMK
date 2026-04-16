@@ -1,6 +1,14 @@
 #define DEFAULT 0
 #define QWERTY 1
 #define MAC 2
-#define MOD 3
+#define MEDIA 3
 #define KEYPAD 4
 #define TOOLS 5
+#define TOOLS_MAC 6
+
+#define HYPRLAND 
+#define HYPR_GR 
+#define AEROSPACE 
+#define APPS 
+#define MOUSE 
+#define JETBRAINS 
