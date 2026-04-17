@@ -1,6 +1,6 @@
 / {
   keymap {
-    trans { // Layer NUMBER
+    trans { 
       display-name = "NAME ME";
       bindings = <
   &trans   &trans   &trans   &trans   &trans   &trans   &trans                                                         &trans   &trans   &trans   &trans   &trans   &trans   &trans
@@ -10,7 +10,7 @@
   &trans   &trans   &trans   &trans   &trans                     &trans   &trans   &trans   &trans   &trans   &trans                     &trans   &trans   &trans   &trans   &trans
       >;
     };
-    none { // Layer NUMBER
+    none { 
       display-name = "NAME ME";
       bindings = <
   &none   &none   &none   &none   &none   &none   &none                                                   &none   &none   &none   &none   &none   &none   &none
