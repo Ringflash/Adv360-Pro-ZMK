@@ -1,15 +1,15 @@
-#define L_DEFAULT 0
-#define L_QWERTY 1
-#define L_MAC 2
-#define L_MEDIA 3
-#define L_KEYPAD 4
-#define L_FTOOLS 5
+#define L_DEFAULT    0
+#define L_QWERTY     1
+#define L_MAC        2
+#define L_MEDIA      3
+#define L_KEYPAD     4
+#define L_FTOOLS     5
 #define L_FTOOLS_MAC 6
-#define L_HYPRLAND 7
-#define L_HYPR_GR 8
-#define L_AEROSPACE 9
-#define L_APPS 10
-#define L_EDITOR 11
+#define L_HYPRLAND   7
+#define L_HYPR_GR    8
+#define L_AEROSPACE  9
+#define L_APPS       10
+#define L_EDITOR     11
 
 #define MOUSE 
 #define SYMBOLS
