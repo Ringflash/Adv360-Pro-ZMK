@@ -1,5 +1,4 @@
 # TODO: configure zmk-nix
-# TODO: test dev shell
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -57,8 +56,28 @@
         update = zmk-nix.packages.${system}.update;
       });
 
-      devShells = forAllSystems (system: {
-        default = zmk-nix.devShells.${system}.default;
-      });
+      devShells = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          baseShell = zmk-nix.devShells.${system}.default;
+          zmk-launcher = pkgs.writeShellScriptBin "zmk" ''
+            ${pkgs.zmk-studio}/bin/zmk-studio < /dev/null > /dev/null 2>&1 & disown
+          '';
+        in
+        {
+          default = pkgs.mkShell {
+            name = "zmk";
+            inputsFrom = [ baseShell ];
+            nativeBuildInputs = with pkgs; [
+              zmk-studio
+              zmk-launcher
+            ];
+            shellHook = ''
+              export GDK_BACKEND=wayland
+            '';
+          };
+        }
+      );
     };
 }
