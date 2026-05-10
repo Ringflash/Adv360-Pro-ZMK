@@ -11,6 +11,7 @@
 #define TAP_TERM_DEF 180
 #define TAP_TERM_MFAST 130
 #define TAP_TERM_FAST 150
+#define TAP_TERM_SLOW 200
 // Layers
 #define L_DEFAULT    0
 #define L_QWERTY     1
@@ -26,12 +27,39 @@
 #define L_EDITOR     11
 // Macros
 // - tap, hold, double tap
+#define TD_A1(NAME, KP) \
+    NAME: NAME { \
+        compatible = "zmk,behavior-tap-dance"; \
+        #binding-cells = <0>; \
+        bindings = <&kp KP>; \
+    }
 #define TD_A1_DT_TOG_LYR(NAME, LAYER) \
     NAME: NAME { \
         compatible = "zmk,behavior-tap-dance"; \
         #binding-cells = <0>; \
         tapping-term-ms = <TAP_TERM_DEF>; \
         bindings = <&none>, <&tog LAYER>; \
+    }
+#define TD_A1_DT_KP(NAME, KP ) \
+    NAME: NAME { \
+        compatible = "zmk,behavior-tap-dance"; \
+        #binding-cells = <0>; \
+        tapping-term-ms = <TAP_TERM_DEF>; \
+        bindings = <&none>, <&kp KP>; \
+    }
+#define TD_A1_DT_TO_LYR(NAME, LAYER) \
+    NAME: NAME { \
+        compatible = "zmk,behavior-tap-dance"; \
+        #binding-cells = <0>; \
+        tapping-term-ms = <TAP_TERM_DEF>; \
+        bindings = <&none>, <&to LAYER>; \
+    }
+#define TD_A2(NAME, TAP, D_TAP) \
+    NAME: NAME { \
+        compatible = "zmk,behavior-tap-dance"; \
+        #binding-cells = <0>; \
+        tapping-term-ms = <TAP_TERM_DEF>; \
+        bindings = <&kp TAP>, <&kp D_TAP>; \
     }
 #define TD_A3(NAME, TAP, HOLD, D_TAP) \
     NAME: NAME { \
@@ -84,8 +112,8 @@
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
             flavor = "hold-preferred"; 
-            tapping-term-ms = <150>;
-            quick-tap-ms = <0>;     
+            tapping-term-ms = <TAP_TERM_SLOW>;
+            quick-tap-ms = <150>;     
             retro-tap;          
             bindings = <&mo>, <&kp>;
         };
@@ -103,8 +131,6 @@
             #binding-cells = <2>;
             flavor = "tap-preferred"; 
             tapping-term-ms = <TAP_TERM_MFAST>;
-            quick-tap-ms = <0>;     
-            retro-tap;          
             bindings = <&kp>, <&kp>;
         };
         ht_mo_sl: ht_momentary_sticky_layer { 
@@ -153,6 +179,10 @@
         // TODO: change for A4
         TD_A3(td_a3_h_res, LG(R), LG(LC(R)), LG(LA(R))); // hyprland, resize window
         TD_A1_DT_TOG_LYR(td_keypad, L_KEYPAD); // toggle keypad layer on double tap
+        TD_A1_DT_TO_LYR(td_l_def, L_DEFAULT); // toggle default layer on double tap
+        TD_A1_DT_KP(td_sleep_lnx, LG(LS(LA(L))));
+        TD_A1_DT_KP(td_sleep_mac, LC(LA(C_EJECT)));
+        /* TD_A2(td_lang, LG(LS(L)), LG(LC(L))); // change language */
         // macros
         m_p2: macro_two_param {
             compatible = "zmk,behavior-macro-two-param";
@@ -255,46 +285,47 @@
     // TODO: swap &cw_caps with and \ ?
     // TODO: swap \ with lang ?
     // TODO: add sticky key to LGUI and LALT ?
+            //
       display-name = "Base";
       bindings = <
-  &kp GRAVE    &kp N1     &kp N2            &kp N3     &kp N4      &kp N5   &ht_dfn_mfst LA(SYSREQ) SYSREQ                                                                                                                           &td_keypad   &kp N6   &kp N7   &kp N8      &kp N9     &kp N0     &kp EQUAL
-  &kp TAB      &kp Q      &kp W             &kp F      &kp P       &kp B    &ht_dfn_mfst LG(LC(LA(LEFT))) LG(LC(LA(RIGHT)))                                                                                                          &td_layout   &kp J    &kp L    &kp U       &kp Y      &kp SEMI   &kp MINUS
-  &kp ESC      &kp A      &kp R             &kp S      &kp T       &kp G    &to L_QWERTY                                                             &kp LCTRL             &sk LALT   &sk LGUI    &kp RCTRL                          &sys_reset   &kp M    &kp N    &kp E       &kp I      &kp O      &kp SQT
+  &kp GRAVE    &kp N1     &kp N2            &kp N3     &kp N4      &kp N5   &kp PSCRN                                                                                                                                                &td_keypad   &kp N6   &kp N7   &kp N8      &kp N9     &kp N0     &kp EQUAL
+  &kp TAB      &kp Q      &kp W             &kp F      &kp P       &kp B    &none                                                                                                                                                    &td_layout   &kp J    &kp L    &kp U       &kp Y      &kp SEMI   &kp MINUS
+  &kp ESC      &kp A      &kp R             &kp S      &kp T       &kp G    &ht_dfn_mfst LG(LC(LA(LEFT))) LG(LC(LA(RIGHT)))                          &kp LCTRL             &sk LALT   &sk LGUI    &kp RCTRL                          &none        &kp M    &kp N    &kp E       &kp I      &kp O      &kp SQT
   &kp LSHFT    &kp Z      &kp X             &kp C      &kp D       &kp V                                                                                                   &kp HOME   &kp PG_UP                                                   &kp K    &kp H    &kp COMMA   &kp DOT    &kp FSLH   &kp RSHFT
   &sl L_APPS   &kp BSLH   &cw_caps CAPS 0   &kp LEFT   &kp RIGHT                                                              &ht_cl L_KEYPAD BSPC   &ht_cl L_FTOOLS DEL   &kp END    &kp PG_DN   &ht_cl L_MEDIA ENTER   &kp SPACE                         &kp UP   &kp DOWN    &kp LBKT   &kp RBKT   &ht_dfn_mfst LG(LC(L)) LG(LS(L))
-//    ┌───────────┬───┬──────────┬──────┬──────┬───┬─────────────┐                                                                                               ┌───────────────┬───┬────┬──────┬───┬───┬──────┐
-//    │     `     │ 1 │    2     │  3   │  4   │ 5 │ screenshot  │                                                                                               │  tog KEYPAD   │ 6 │ 7  │  8   │ 9 │ 0 │  =   │
-//    ├───────────┼───┼──────────┼──────┼──────┼───┼─────────────┤                                                                                               ├───────────────┼───┼────┼──────┼───┼───┼──────┤
-//    │    tab    │ Q │    W     │  F   │  P   │ B │ < worksp >  │                                                                                               │ to Qwerty/Mac │ J │ L  │  U   │ Y │ ; │  -   │
-//    ├───────────┼───┼──────────┼──────┼──────┼───┼─────────────┤                      ┌───────────────────────┬──────────┬──────────┬────────────────────┐     ├───────────────┼───┼────┼──────┼───┼───┼──────┤
-//    │    esc    │ A │    R     │  S   │  T   │ G │ to L_QWERTY │                      │         lctl          │ &sk lalt │ &sk lgui │        rctl        │     │  &sys_reset   │ M │ N  │  E   │ I │ O │  '   │
-//    ├───────────┼───┼──────────┼──────┼──────┼───┼─────────────┘                      └───────────────────────┼──────────┼──────────┼────────────────────┘     └───────────────┼───┼────┼──────┼───┼───┼──────┤
-//    │   lsft    │ Z │    X     │  C   │  D   │ V │                                                            │   home   │   pgup   │                                          │ K │ H  │  ,   │ . │ / │ rsft │
-//    ├───────────┼───┼──────────┼──────┼──────┼───┘             ┌──────────────────────┬───────────────────────┼──────────┼──────────┼────────────────────┬─────┐               └───┼────┼──────┼───┼───┼──────┤
-//    │ sl L_APPS │ \ │ caps duo │ left │ rght │                 │ &ht_cl L_KEYPAD bspc │ &ht_cl L_FTOOlsft del │   end    │   pgdn   │ &ht_cl L_MEDIA ent │ spc │                   │ up │ down │ [ │ ] │ lang │
-//    └───────────┴───┴──────────┴──────┴──────┘                 └──────────────────────┴───────────────────────┴──────────┴──────────┴────────────────────┴─────┘                   └────┴──────┴───┴───┴──────┘
+//    ┌───────────┬───┬──────────┬──────┬──────┬───┬────────────┐                                                                                               ┌───────────────┬───┬────┬──────┬───┬───┬──────┐
+//    │     `     │ 1 │    2     │  3   │  4   │ 5 │    pscr    │                                                                                               │  tog KEYPAD   │ 6 │ 7  │  8   │ 9 │ 0 │  =   │
+//    ├───────────┼───┼──────────┼──────┼──────┼───┼────────────┤                                                                                               ├───────────────┼───┼────┼──────┼───┼───┼──────┤
+//    │    tab    │ Q │    W     │  F   │  P   │ B │            │                                                                                               │ to QWERTY/MAC │ J │ L  │  U   │ Y │ ; │  -   │
+//    ├───────────┼───┼──────────┼──────┼──────┼───┼────────────┤                      ┌───────────────────────┬──────────┬──────────┬────────────────────┐     ├───────────────┼───┼────┼──────┼───┼───┼──────┤
+//    │    esc    │ A │    R     │  S   │  T   │ G │ < worksp > │                      │         lctl          │ &sk lalt │ &sk lgui │        rctl        │     │               │ M │ N  │  E   │ I │ O │  '   │
+//    ├───────────┼───┼──────────┼──────┼──────┼───┼────────────┘                      └───────────────────────┼──────────┼──────────┼────────────────────┘     └───────────────┼───┼────┼──────┼───┼───┼──────┤
+//    │   lsft    │ Z │    X     │  C   │  D   │ V │                                                           │   home   │   pgup   │                                          │ K │ H  │  ,   │ . │ / │ rsft │
+//    ├───────────┼───┼──────────┼──────┼──────┼───┘            ┌──────────────────────┬───────────────────────┼──────────┼──────────┼────────────────────┬─────┐               └───┼────┼──────┼───┼───┼──────┤
+//    │ sl L_APPS │ \ │ caps duo │ left │ rght │                │ &ht_cl L_KEYPAD bspc │ &ht_cl L_FTOOlsft del │   end    │   pgdn   │ &ht_cl L_MEDIA ent │ spc │                   │ up │ down │ [ │ ] │ lang │
+//    └───────────┴───┴──────────┴──────┴──────┘                └──────────────────────┴───────────────────────┴──────────┴──────────┴────────────────────┴─────┘                   └────┴──────┴───┴───┴──────┘
       >;
     };
     qwerty { 
     // TODO: to DEFAULT on double tap
       display-name = "Qwerty";
       bindings = <
-  &trans   &trans   &trans   &trans   &trans   &trans   &trans                                                         &trans          &trans   &trans   &trans   &trans   &trans     &trans
-  &trans   &kp Q    &kp W    &kp E    &kp R    &kp T    &trans                                                         &to L_DEFAULT   &kp Y    &kp U    &kp I    &kp O    &kp P      &trans
-  &trans   &kp A    &kp S    &kp D    &kp F    &kp G    &trans            &trans   &trans   &trans   &trans            &trans          &kp H    &kp J    &kp K    &kp L    &kp SEMI   &trans
-  &trans   &kp Z    &kp X    &kp C    &kp V    &kp B                               &trans   &trans                                     &kp N    &kp M    &trans   &trans   &trans     &trans
-  &trans   &trans   &trans   &trans   &trans                     &trans   &trans   &trans   &trans   &trans   &trans                            &trans   &trans   &trans   &trans     &trans
-//    ┌───┬───┬───┬───┬───┬───┬───┐                       ┌─────────────┬───┬───┬───┬───┬───┬───┐
-//    │ & │ & │ & │ & │ & │ & │ & │                       │      &      │ & │ & │ & │ & │ & │ & │
-//    ├───┼───┼───┼───┼───┼───┼───┤                       ├─────────────┼───┼───┼───┼───┼───┼───┤
-//    │ & │ Q │ W │ E │ R │ T │ & │                       │ to L_DEFAU< │ Y │ U │ I │ O │ P │ & │
-//    ├───┼───┼───┼───┼───┼───┼───┤   ┌───┬───┬───┬───┐   ├─────────────┼───┼───┼───┼───┼───┼───┤
-//    │ & │ A │ S │ D │ F │ G │ & │   │ & │ & │ & │ & │   │      &      │ H │ J │ K │ L │ ; │ & │
-//    ├───┼───┼───┼───┼───┼───┼───┘   └───┼───┼───┼───┘   └─────────────┼───┼───┼───┼───┼───┼───┤
-//    │ & │ Z │ X │ C │ V │ B │           │ & │ & │                     │ N │ M │ & │ & │ & │ & │
-//    ├───┼───┼───┼───┼───┼───┘   ┌───┬───┼───┼───┼───┬───┐             └───┼───┼───┼───┼───┼───┤
-//    │ & │ & │ & │ & │ & │       │ & │ & │ & │ & │ & │ & │                 │ & │ & │ & │ & │ & │
-//    └───┴───┴───┴───┴───┘       └───┴───┴───┴───┴───┴───┘                 └───┴───┴───┴───┴───┘
+  &trans   &trans   &trans   &trans   &trans   &trans   &trans                                                         &trans      &trans   &trans   &trans   &trans   &trans     &trans
+  &trans   &kp Q    &kp W    &kp E    &kp R    &kp T    &trans                                                         &td_l_def   &kp Y    &kp U    &kp I    &kp O    &kp P      &trans
+  &trans   &kp A    &kp S    &kp D    &kp F    &kp G    &trans            &trans   &trans   &trans   &trans            &trans      &kp H    &kp J    &kp K    &kp L    &kp SEMI   &trans
+  &trans   &kp Z    &kp X    &kp C    &kp V    &kp B                               &trans   &trans                                 &kp N    &kp M    &trans   &trans   &trans     &trans
+  &trans   &trans   &trans   &trans   &trans                     &trans   &trans   &trans   &trans   &trans   &trans                        &trans   &trans   &trans   &trans     &trans
+//    ┌───┬───┬───┬───┬───┬───┬───┐                       ┌───────────┬───┬───┬───┬───┬───┬───┐
+//    │ & │ & │ & │ & │ & │ & │ & │                       │     &     │ & │ & │ & │ & │ & │ & │
+//    ├───┼───┼───┼───┼───┼───┼───┤                       ├───────────┼───┼───┼───┼───┼───┼───┤
+//    │ & │ Q │ W │ E │ R │ T │ & │                       │ to DEFAU< │ Y │ U │ I │ O │ P │ & │
+//    ├───┼───┼───┼───┼───┼───┼───┤   ┌───┬───┬───┬───┐   ├───────────┼───┼───┼───┼───┼───┼───┤
+//    │ & │ A │ S │ D │ F │ G │ & │   │ & │ & │ & │ & │   │     &     │ H │ J │ K │ L │ ; │ & │
+//    ├───┼───┼───┼───┼───┼───┼───┘   └───┼───┼───┼───┘   └───────────┼───┼───┼───┼───┼───┼───┤
+//    │ & │ Z │ X │ C │ V │ B │           │ & │ & │                   │ N │ M │ & │ & │ & │ & │
+//    ├───┼───┼───┼───┼───┼───┘   ┌───┬───┼───┼───┼───┬───┐           └───┼───┼───┼───┼───┼───┤
+//    │ & │ & │ & │ & │ & │       │ & │ & │ & │ & │ & │ & │               │ & │ & │ & │ & │ & │
+//    └───┴───┴───┴───┴───┘       └───┴───┴───┴───┴───┴───┘               └───┴───┴───┴───┴───┘
       >;
     };
     mac { 
@@ -306,21 +337,21 @@
       display-name = "MacOS";
       bindings = <
   &trans   &trans   &trans   &trans   &trans   &trans   &ht_dfn_mfst LG(LS(N3)) LG(LS(N4))                                                                      &trans          &trans   &trans   &trans   &trans   &trans   &trans
-  &trans   &trans   &trans   &trans   &trans   &trans   &ht_dfn_mfst LG(LS(LC(W))) LG(LC(LA(W)))                                                                &to L_DEFAULT   &trans   &trans   &trans   &trans   &trans   &trans
+  &trans   &trans   &trans   &trans   &trans   &trans   &ht_dfn_mfst LG(LS(LC(W))) LG(LC(LA(W)))                                                                &td_l_def       &trans   &trans   &trans   &trans   &trans   &trans
   &trans   &trans   &trans   &trans   &trans   &trans   &trans                                              &kp LGUI   &trans   &kp LCTRL   &kp RGUI            &kp LC(SPACE)   &trans   &trans   &trans   &trans   &trans   &trans
   &trans   &trans   &trans   &trans   &trans   &trans                                                                  &trans   &trans                                          &trans   &trans   &trans   &trans   &trans   &trans
   &trans   &trans   &trans   &trans   &trans                                                       &trans   &trans     &trans   &trans      &trans     &trans                            &trans   &trans   &trans   &trans   &kp LG(SPACE)
-//    ┌───┬───┬───┬───┬───┬───┬────────────┐                                ┌─────────────┬───┬───┬───┬───┬───┬──────┐
-//    │ & │ & │ & │ & │ & │ & │ screenshot │                                │      &      │ & │ & │ & │ & │ & │  &   │
-//    ├───┼───┼───┼───┼───┼───┼────────────┤                                ├─────────────┼───┼───┼───┼───┼───┼──────┤
-//    │ & │ & │ & │ & │ & │ & │ < worksp > │                                │ to L_DEFAU< │ & │ & │ & │ & │ & │  &   │
-//    ├───┼───┼───┼───┼───┼───┼────────────┤   ┌──────┬───┬──────┬──────┐   ├─────────────┼───┼───┼───┼───┼───┼──────┤
-//    │ & │ & │ & │ & │ & │ & │     &      │   │ lgui │ & │ lctl │ rgui │   │   search    │ & │ & │ & │ & │ & │  &   │
-//    ├───┼───┼───┼───┼───┼───┼────────────┘   └──────┼───┼──────┼──────┘   └─────────────┼───┼───┼───┼───┼───┼──────┤
-//    │ & │ & │ & │ & │ & │ & │                       │ & │  &   │                        │ & │ & │ & │ & │ & │  &   │
-//    ├───┼───┼───┼───┼───┼───┘            ┌───┬──────┼───┼──────┼──────┬───┐             └───┼───┼───┼───┼───┼──────┤
-//    │ & │ & │ & │ & │ & │                │ & │  &   │ & │  &   │  &   │ & │                 │ & │ & │ & │ & │ lang │
-//    └───┴───┴───┴───┴───┘                └───┴──────┴───┴──────┴──────┴───┘                 └───┴───┴───┴───┴──────┘
+//    ┌───┬───┬───┬───┬───┬───┬────────────┐                                ┌───────────┬───┬───┬───┬───┬───┬──────┐
+//    │ & │ & │ & │ & │ & │ & │ screenshot │                                │     &     │ & │ & │ & │ & │ & │  &   │
+//    ├───┼───┼───┼───┼───┼───┼────────────┤                                ├───────────┼───┼───┼───┼───┼───┼──────┤
+//    │ & │ & │ & │ & │ & │ & │ < worksp > │                                │ to DEFAU< │ & │ & │ & │ & │ & │  &   │
+//    ├───┼───┼───┼───┼───┼───┼────────────┤   ┌──────┬───┬──────┬──────┐   ├───────────┼───┼───┼───┼───┼───┼──────┤
+//    │ & │ & │ & │ & │ & │ & │     &      │   │ lgui │ & │ lctl │ rgui │   │  search   │ & │ & │ & │ & │ & │  &   │
+//    ├───┼───┼───┼───┼───┼───┼────────────┘   └──────┼───┼──────┼──────┘   └───────────┼───┼───┼───┼───┼───┼──────┤
+//    │ & │ & │ & │ & │ & │ & │                       │ & │  &   │                      │ & │ & │ & │ & │ & │  &   │
+//    ├───┼───┼───┼───┼───┼───┘            ┌───┬──────┼───┼──────┼──────┬───┐           └───┼───┼───┼───┼───┼──────┤
+//    │ & │ & │ & │ & │ & │                │ & │  &   │ & │  &   │  &   │ & │               │ & │ & │ & │ & │ lang │
+//    └───┴───┴───┴───┴───┘                └───┴──────┴───┴──────┴──────┴───┘               └───┴───┴───┴───┴──────┘
       >;
     };
   // &none            &bt BT_DISC 0   &bt BT_DISC 1   &bt BT_DISC 2   &bt BT_DISC 3   &bt BT_DISC 4   &none                                                                       &kp LC(LA(C_EJECT))   &kp LG(LC(Q))           &kp C_VOL_DN            &kp C_MUTE          &kp C_VOL_UP   &none   &none // DELETE: maybe 
@@ -332,22 +363,22 @@
     // TODO: switch right and left side media control buttons ?
       display-name = "Media";
       bindings = <
-  &none            &bt BT_SEL 0   &bt BT_SEL 1    &bt BT_SEL 2   &bt BT_SEL 3    &bt BT_SEL 4   &none                                                                       &none                 &none                   &none                   &none               &none          &none   &bt BT_CLR
-  &none            &none          &none           &none          &none           &none          &none                                                                       &kp LC(LA(C_EJECT))   &kp LG(LC(Q))           &kp C_VOL_DN            &kp C_MUTE          &kp C_VOL_UP   &none   &none
-  &studio_unlock   &none          &kp C_BRI_DEC   &none          &kp C_BRI_INC   &none          &none                &bl BL_TOG   &rgb_ug RGB_TOG   &none   &none           &kp LG(LS(LA(L)))     &kp LG(LS(LC(LA(L))))   &kp C_PREV              &kp C_PLAY_PAUSE    &kp C_NEXT     &none   &none
-  &none            &none          &none           &none          &none           &none                                            &none             &none                                         &none                   &kp LG(LS(LC(LA(O))))   &kp LG(LS(LA(O)))   &none          &none   &stp STP_BAT
-  &bootloader      &none          &none           &none          &none                                  &bl BL_DEC   &bl BL_INC   &none             &none   &none   &none                                                 &none                   &none               &none          &none   &bootloader
-//    ┌────────────────┬──────────┬──────────┬──────────┬──────────┬──────────┬─────┐                                               ┌───────────┬──────────┬──────────┬────────────┬──────┬─────┬─────────┐
-//    │                │ bt_sel 0 │ bt_sel 1 │ bt_sel 2 │ bt_sel 3 │ bt_sel 4 │     │                                               │           │          │          │            │      │     │ bt_clr  │
-//    ├────────────────┼──────────┼──────────┼──────────┼──────────┼──────────┼─────┤                                               ├───────────┼──────────┼──────────┼────────────┼──────┼─────┼─────────┤
-//    │                │          │          │          │          │          │     │                                               │ sleep mac │ lock mac │   vold   │    mute    │ volu │     │         │
-//    ├────────────────┼──────────┼──────────┼──────────┼──────────┼──────────┼─────┤         ┌─────────┬─────────┬─────┬─────┐     ├───────────┼──────────┼──────────┼────────────┼──────┼─────┼─────────┤
-//    │ &studio_unlock │          │   bri-   │          │   bri+   │          │     │         │ bl_ tog │ ug_ tog │     │     │     │   sleep   │   lock   │   prev   │    play    │ next │     │         │
-//    ├────────────────┼──────────┼──────────┼──────────┼──────────┼──────────┼─────┘         └─────────┼─────────┼─────┼─────┘     └───────────┼──────────┼──────────┼────────────┼──────┼─────┼─────────┤
-//    │                │          │          │          │          │          │                         │         │     │                       │          │ speakers │ headphones │      │     │ bat lvl │
-//    ├────────────────┼──────────┼──────────┼──────────┼──────────┼──────────┘     ┌─────────┬─────────┼─────────┼─────┼─────┬─────┐           └──────────┼──────────┼────────────┼──────┼─────┼─────────┤
-//    │      boot      │          │          │          │          │                │ bl_ br- │ bl_ br+ │         │     │     │     │                      │          │            │      │     │  boot   │
-//    └────────────────┴──────────┴──────────┴──────────┴──────────┘                └─────────┴─────────┴─────────┴─────┴─────┴─────┘                      └──────────┴────────────┴──────┴─────┴─────────┘
+  &none            &bt BT_SEL 0   &bt BT_SEL 1    &bt BT_SEL 2   &bt BT_SEL 3    &bt BT_SEL 4   &none                                                                       &none           &none                   &none                   &none               &none          &none   &bt BT_CLR
+  &none            &none          &none           &none          &none           &none          &none                                                                       &td_sleep_mac   &kp LG(LC(Q))           &kp C_VOL_DN            &kp C_MUTE          &kp C_VOL_UP   &none   &none
+  &studio_unlock   &none          &kp C_BRI_DEC   &none          &kp C_BRI_INC   &none          &none                &bl BL_TOG   &rgb_ug RGB_TOG   &none   &none           &td_sleep_lnx   &kp LG(LS(LC(LA(L))))   &kp C_PREV              &kp C_PLAY_PAUSE    &kp C_NEXT     &none   &none
+  &none            &none          &none           &none          &none           &none                                            &none             &none                                   &none                   &kp LG(LS(LC(LA(O))))   &kp LG(LS(LA(O)))   &none          &none   &stp STP_BAT
+  &bootloader      &none          &none           &none          &none                                  &bl BL_DEC   &bl BL_INC   &none             &none   &none   &none                                           &none                   &none               &none          &none   &bootloader
+//    ┌────────────────┬──────────┬──────────┬──────────┬──────────┬──────────┬─────┐                                               ┌───────────────┬──────────┬──────────┬────────────┬──────┬─────┬─────────┐
+//    │                │ bt_sel 0 │ bt_sel 1 │ bt_sel 2 │ bt_sel 3 │ bt_sel 4 │     │                                               │               │          │          │            │      │     │ bt_clr  │
+//    ├────────────────┼──────────┼──────────┼──────────┼──────────┼──────────┼─────┤                                               ├───────────────┼──────────┼──────────┼────────────┼──────┼─────┼─────────┤
+//    │                │          │          │          │          │          │     │                                               │ &td_sleep_mac │ lock mac │   vold   │    mute    │ volu │     │         │
+//    ├────────────────┼──────────┼──────────┼──────────┼──────────┼──────────┼─────┤         ┌─────────┬─────────┬─────┬─────┐     ├───────────────┼──────────┼──────────┼────────────┼──────┼─────┼─────────┤
+//    │ &studio_unlock │          │   bri-   │          │   bri+   │          │     │         │ bl_ tog │ ug_ tog │     │     │     │ &td_sleep_lnx │   lock   │   prev   │    play    │ next │     │         │
+//    ├────────────────┼──────────┼──────────┼──────────┼──────────┼──────────┼─────┘         └─────────┼─────────┼─────┼─────┘     └───────────────┼──────────┼──────────┼────────────┼──────┼─────┼─────────┤
+//    │                │          │          │          │          │          │                         │         │     │                           │          │ speakers │ headphones │      │     │ bat lvl │
+//    ├────────────────┼──────────┼──────────┼──────────┼──────────┼──────────┘     ┌─────────┬─────────┼─────────┼─────┼─────┬─────┐               └──────────┼──────────┼────────────┼──────┼─────┼─────────┤
+//    │      boot      │          │          │          │          │                │ bl_ br- │ bl_ br+ │         │     │     │     │                          │          │            │      │     │  boot   │
+//    └────────────────┴──────────┴──────────┴──────────┴──────────┘                └─────────┴─────────┴─────────┴─────┴─────┴─────┘                          └──────────┴────────────┴──────┴─────┴─────────┘
       >;
     };
     keypad { 
@@ -359,22 +390,22 @@
     // TODO: maybe mod morph on backspace to delete with shift
       display-name = "Keypad & symbols";
       bindings = <
-  &none    &m_js_fn            &m_paren DOUBLE_QUOTES   &m_brkt DOUBLE_QUOTES   &m_brkt SINGLE_QUOTE   &none       &none                                                                              &tog L_KEYPAD   &none                    &m_p2 PLUS PLUS   &m_p2 MINUS MINUS   &m_p2_s PLUS EQUAL   &m_p2_s MINUS EQUAL   &kp KP_NUMLOCK
-  &trans   &m_p2_s LT LT       &m_p2_s GT GT            &m_p2 MINUS GT          &m_p2 COLON COLON      &m_dots     &none                                                                              &none           &kp KP_DIVIDE            &kp KP_N7         &kp KP_N8           &kp KP_N9            &kp KP_MINUS          &kp UNDERSCORE
-  &trans   &m_p2_s LT EQUAL    &m_p2_s GT EQUAL         &m_p2_s EXCL EQUAL      &m_p2_s EQUAL EQUAL    &m_eq3t     &m_ne_eq2t           &trans   &trans   &trans          &kp DEL                     &none           &kp KP_MULTIPLY          &kp KP_N4         &kp KP_N5           &kp KP_N6            &kp KP_PLUS           &kp SQT
-  &trans   &m_p2_s PIPE PIPE   &m_p2_s AMPS AMPS        &kp KP_COMMA            &kp KP_DOT             &kp COLON                                 &none    &kp C_AC_UNDO                                               &ht_dfn_mfst RPAR LPAR   &kp KP_N1         &kp KP_N2           &kp KP_N3            &kp KP_EQUAL          &kp PERCENT
-  &none    &m_py_str           &m_p2_s EQUAL GT         &trans                  &trans                                          &none   &none    &none    &kp C_AC_REDO   &kp BACKSPACE   &kp KP_N0                                            &trans            &trans              &kp KP_DOT           &kp KP_ENTER          &none
-//    ┌─────┬──────┬──────┬──────┬──────┬─────┬─────┐                                   ┌──────────────┬─────┬────┬────┬────┬─────┬──────┐
-//    │     │ ()=> │ ("") │ [""] │ [''] │     │     │                                   │ tog L_KEYPAD │     │ ++ │ -- │ += │ -=  │ nlck │
-//    ├─────┼──────┼──────┼──────┼──────┼─────┼─────┤                                   ├──────────────┼─────┼────┼────┼────┼─────┼──────┤
-//    │  &  │  <<  │  >>  │  ->  │  ::  │ ... │     │                                   │              │  /  │ 7  │ 8  │ 9  │  -  │  _   │
-//    ├─────┼──────┼──────┼──────┼──────┼─────┼─────┤     ┌─────┬─────┬──────┬──────┐   ├──────────────┼─────┼────┼────┼────┼─────┼──────┤
-//    │  &  │  <=  │  >=  │  !=  │  ==  │ === │ !== │     │  &  │  &  │  &   │ del  │   │              │  *  │ 4  │ 5  │ 6  │  +  │  '   │
-//    ├─────┼──────┼──────┼──────┼──────┼─────┼─────┘     └─────┼─────┼──────┼──────┘   └──────────────┼─────┼────┼────┼────┼─────┼──────┤
-//    │  &  │  ||  │  &&  │  ,   │  .   │  :  │                 │     │ undo │                         │ ()  │ 1  │ 2  │ 3  │  =  │  %   │
-//    ├─────┼──────┼──────┼──────┼──────┼─────┘     ┌─────┬─────┼─────┼──────┼──────┬───┐              └─────┼────┼────┼────┼─────┼──────┤
-//    │     │ ${}  │  =>  │  &   │  &   │           │     │     │     │ redo │ bspc │ 0 │                    │ &  │ &  │ .  │ ent │      │
-//    └─────┴──────┴──────┴──────┴──────┘           └─────┴─────┴─────┴──────┴──────┴───┘                    └────┴────┴────┴─────┴──────┘
+  &none    &m_js_fn            &m_paren DOUBLE_QUOTES   &m_brkt DOUBLE_QUOTES   &m_brkt SINGLE_QUOTE   &none       &none                                                                           &tog L_KEYPAD   &none                    &m_p2 PLUS PLUS   &m_p2 MINUS MINUS   &m_p2_s PLUS EQUAL   &m_p2_s MINUS EQUAL   &kp KP_NUMLOCK
+  &trans   &m_p2_s LT LT       &m_p2_s GT GT            &m_p2 MINUS GT          &m_p2 COLON COLON      &m_dots     &none                                                                           &none           &kp KP_DIVIDE            &kp KP_N7         &kp KP_N8           &kp KP_N9            &kp KP_MINUS          &kp UNDERSCORE
+  &trans   &m_p2_s LT EQUAL    &m_p2_s GT EQUAL         &m_p2_s EXCL EQUAL      &m_p2_s EQUAL EQUAL    &m_eq3t     &m_ne_eq2t           &trans   &trans   &trans       &kp DEL                     &none           &kp KP_MULTIPLY          &kp KP_N4         &kp KP_N5           &kp KP_N6            &kp KP_PLUS           &kp SQT
+  &trans   &m_p2_s PIPE PIPE   &m_p2_s AMPS AMPS        &kp COMMA               &kp KP_DOT             &kp COLON                                 &none    &kp K_UNDO                                               &ht_dfn_mfst RPAR LPAR   &kp KP_N1         &kp KP_N2           &kp KP_N3            &kp KP_EQUAL          &kp PERCENT
+  &none    &m_py_str           &m_p2_s EQUAL GT         &trans                  &trans                                          &none   &none    &none    &kp K_REDO   &kp BACKSPACE   &kp KP_N0                                            &trans            &trans              &kp KP_DOT           &kp KP_ENTER          &none
+//    ┌─────┬──────┬──────┬──────┬──────┬─────┬─────┐                                    ┌──────────────┬─────┬────┬────┬────┬─────┬──────┐
+//    │     │ ()=> │ ("") │ [""] │ [''] │     │     │                                    │ tog L_KEYPAD │     │ ++ │ -- │ += │ -=  │ nlck │
+//    ├─────┼──────┼──────┼──────┼──────┼─────┼─────┤                                    ├──────────────┼─────┼────┼────┼────┼─────┼──────┤
+//    │  &  │  <<  │  >>  │  ->  │  ::  │ ... │     │                                    │              │  /  │ 7  │ 8  │ 9  │  -  │  _   │
+//    ├─────┼──────┼──────┼──────┼──────┼─────┼─────┤     ┌─────┬─────┬───────┬──────┐   ├──────────────┼─────┼────┼────┼────┼─────┼──────┤
+//    │  &  │  <=  │  >=  │  !=  │  ==  │ === │ !== │     │  &  │  &  │   &   │ del  │   │              │  *  │ 4  │ 5  │ 6  │  +  │  '   │
+//    ├─────┼──────┼──────┼──────┼──────┼─────┼─────┘     └─────┼─────┼───────┼──────┘   └──────────────┼─────┼────┼────┼────┼─────┼──────┤
+//    │  &  │  ||  │  &&  │  ,   │  .   │  :  │                 │     │ undo  │                         │ ()  │ 1  │ 2  │ 3  │  =  │  %   │
+//    ├─────┼──────┼──────┼──────┼──────┼─────┘     ┌─────┬─────┼─────┼───────┼──────┬───┐              └─────┼────┼────┼────┼─────┼──────┤
+//    │     │ ${}  │  =>  │  &   │  &   │           │     │     │     │ again │ bspc │ 0 │                    │ &  │ &  │ .  │ ent │      │
+//    └─────┴──────┴──────┴──────┴──────┘           └─────┴─────┴─────┴───────┴──────┴───┘                    └────┴────┴────┴─────┴──────┘
       >;
     };
     tools { 

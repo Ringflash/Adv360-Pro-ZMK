@@ -64,12 +64,35 @@
           zmk-launcher = pkgs.writeShellScriptBin "zmk" ''
             ${pkgs.zmk-studio}/bin/zmk-studio < /dev/null > /dev/null 2>&1 & disown
           '';
+
+          flash-left = pkgs.writeShellScriptBin "flash" ''
+            SIDE="$1"
+            if [[ $SIDE != "left" && $SIDE != "right" ]]; then 
+                echo "Specify side: left or right"
+                exit 1
+            fi
+
+            if [ ! -d "result" ]; then
+              echo "Error: 'result' directory not found. Run 'nix build' first."
+              exit 1
+            fi
+
+            if udisksctl mount -b /dev/sda; then
+               cp -L "result/zmk_$SIDE.uf2" /run/media/vladyslav/ADV360PRO/
+               sync
+               # udisksctl unmount -b /dev/sda1
+               echo "Flash complete! Keyboard will reboot."
+            else
+               echo "Error: Could not mount keyboard side. Is the keyboard in bootloader mode? Also check device mount point with lsblk"
+            fi
+          '';
         in
         {
           default = pkgs.mkShell {
             name = "zmk";
             inputsFrom = [ baseShell ];
             nativeBuildInputs = with pkgs; [
+              flash-left
               zmk-studio
               zmk-launcher
             ];
