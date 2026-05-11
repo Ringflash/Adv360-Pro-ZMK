@@ -10,6 +10,7 @@
 #define L_AEROSPACE  9
 #define L_APPS       10
 #define L_EDITOR     11
+#define L_ARROWS     12
 
 #define MOUSE 
 #define SYMBOLS

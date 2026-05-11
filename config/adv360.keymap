@@ -4,6 +4,9 @@
 #include <dt-bindings/zmk/rgb.h>
 #include <dt-bindings/zmk/stp.h>
 #include <dt-bindings/zmk/backlight.h>
+
+#define ZMK_POINTING_DEFAULT_MOVE_VAL 1800 
+#define ZMK_POINTING_DEFAULT_SCRL_VAL 20
 #include <dt-bindings/zmk/pointing.h>
 
 /* PREPROCESSOR */
@@ -25,6 +28,7 @@
 #define L_AEROSPACE  9
 #define L_APPS       10
 #define L_EDITOR     11
+#define L_ARROWS     12
 // Macros
 // - tap, hold, double tap
 #define TD_A1(NAME, KP) \
@@ -107,13 +111,25 @@
             quick-release;
             ignore-modifiers;
         };
+        hrm: ht_home_row_mods {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            /* flavor = "balanced"; */
+            flavor = "tap-preferred";
+            require-prior-idle-ms = <135>;
+            tapping-term-ms = <TAP_TERM_DEF>;
+            quick-tap-ms = <150>;
+            hold-while-undecided;
+            retro-tap;
+            bindings = <&kp>, <&kp>;
+        };
         ht_cl: ht_cluster_layer {
         // TODO: setup tapping term
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
             flavor = "hold-preferred"; 
             tapping-term-ms = <TAP_TERM_SLOW>;
-            quick-tap-ms = <150>;     
+            quick-tap-ms = <175>;     
             retro-tap;          
             bindings = <&mo>, <&kp>;
         };
@@ -139,6 +155,13 @@
             flavor = "hold-preferred";
             tapping-term-ms = <TAP_TERM_FAST>;
             bindings = <&mo>, <&sl>; 
+        };
+        ht_tog_sl: ht_toggle_sticky_layer { 
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "hold-preferred";
+            tapping-term-ms = <TAP_TERM_FAST>;
+            bindings = <&tog>, <&sl>; 
         };
         ht_mo_tog: ht_momentary_toggle_layer { 
             compatible = "zmk,behavior-hold-tap";
@@ -268,6 +291,11 @@
   /* KEYMAP */
   keymap {
     compatible = "zmk,keymap";
+ /*
+  &kp ESC      &hrm LGUI A   &hrm LALT R       &hrm LCTRL S   &hrm LSHFT T      &kp G    &ht_dfn_mfst LG(LC(LA(LEFT))) LG(LC(LA(RIGHT)))                          &kp LCTRL             &sk LGUI   &sk LGUI   &kp RCTRL                          &none        &kp M    &hrm RSHIFT N   &hrm RCTRL E   &hrm RALT I   &hrm RGUI O   &kp SQT
+  &kp LSHFT    &kp Z         &kp X             &kp C          &kp D             &kp V                                                                                                   &sk LALT   &kp LALT                                                   &kp K    &kp H           &kp COMMA      &kp DOT       &kp FSLH      &kp RSHFT
+  &sl L_APPS   &kp BSLH      &cw_caps CAPS 0   &kp LEFT       &ht_cl 12 RIGHT                                                              &ht_cl L_KEYPAD BSPC   &ht_cl L_FTOOLS DEL   &mm_home   &kp END    &ht_cl L_MEDIA ENTER   &kp SPACE                         &kp UP          &kp DOWN       &kp LBKT      &kp RBKT      &ht_dfn_mfst LG(LC(L)) LG(LS(L))
+  */
 
   /* &sl L_APPS   &kp GRAVE   &cw_caps CAPS 0   &kp LEFT   &kp RIGHT                                                              &ht_cl L_KEYPAD SPACE   &ht_cl L_FTOOLS ENTER   &kp END    &kp PG_DN   &ht_cl L_MEDIA DEL   &kp BSPC                         &kp UP   &kp DOWN    &kp LBKT   &kp RBKT   &ht_dfn_mfst LG(LC(L)) LG(LS(L)) */
     default_layer { 
@@ -288,22 +316,22 @@
             //
       display-name = "Base";
       bindings = <
-  &kp GRAVE    &kp N1     &kp N2            &kp N3     &kp N4      &kp N5   &kp PSCRN                                                                                                                                                &td_keypad   &kp N6   &kp N7   &kp N8      &kp N9     &kp N0     &kp EQUAL
-  &kp TAB      &kp Q      &kp W             &kp F      &kp P       &kp B    &none                                                                                                                                                    &td_layout   &kp J    &kp L    &kp U       &kp Y      &kp SEMI   &kp MINUS
-  &kp ESC      &kp A      &kp R             &kp S      &kp T       &kp G    &ht_dfn_mfst LG(LC(LA(LEFT))) LG(LC(LA(RIGHT)))                          &kp LCTRL             &sk LALT   &sk LGUI    &kp RCTRL                          &none        &kp M    &kp N    &kp E       &kp I      &kp O      &kp SQT
-  &kp LSHFT    &kp Z      &kp X             &kp C      &kp D       &kp V                                                                                                   &kp HOME   &kp PG_UP                                                   &kp K    &kp H    &kp COMMA   &kp DOT    &kp FSLH   &kp RSHFT
-  &sl L_APPS   &kp BSLH   &cw_caps CAPS 0   &kp LEFT   &kp RIGHT                                                              &ht_cl L_KEYPAD BSPC   &ht_cl L_FTOOLS DEL   &kp END    &kp PG_DN   &ht_cl L_MEDIA ENTER   &kp SPACE                         &kp UP   &kp DOWN    &kp LBKT   &kp RBKT   &ht_dfn_mfst LG(LC(L)) LG(LS(L))
-//    ┌───────────┬───┬──────────┬──────┬──────┬───┬────────────┐                                                                                               ┌───────────────┬───┬────┬──────┬───┬───┬──────┐
-//    │     `     │ 1 │    2     │  3   │  4   │ 5 │    pscr    │                                                                                               │  tog KEYPAD   │ 6 │ 7  │  8   │ 9 │ 0 │  =   │
-//    ├───────────┼───┼──────────┼──────┼──────┼───┼────────────┤                                                                                               ├───────────────┼───┼────┼──────┼───┼───┼──────┤
-//    │    tab    │ Q │    W     │  F   │  P   │ B │            │                                                                                               │ to QWERTY/MAC │ J │ L  │  U   │ Y │ ; │  -   │
-//    ├───────────┼───┼──────────┼──────┼──────┼───┼────────────┤                      ┌───────────────────────┬──────────┬──────────┬────────────────────┐     ├───────────────┼───┼────┼──────┼───┼───┼──────┤
-//    │    esc    │ A │    R     │  S   │  T   │ G │ < worksp > │                      │         lctl          │ &sk lalt │ &sk lgui │        rctl        │     │               │ M │ N  │  E   │ I │ O │  '   │
-//    ├───────────┼───┼──────────┼──────┼──────┼───┼────────────┘                      └───────────────────────┼──────────┼──────────┼────────────────────┘     └───────────────┼───┼────┼──────┼───┼───┼──────┤
-//    │   lsft    │ Z │    X     │  C   │  D   │ V │                                                           │   home   │   pgup   │                                          │ K │ H  │  ,   │ . │ / │ rsft │
-//    ├───────────┼───┼──────────┼──────┼──────┼───┘            ┌──────────────────────┬───────────────────────┼──────────┼──────────┼────────────────────┬─────┐               └───┼────┼──────┼───┼───┼──────┤
-//    │ sl L_APPS │ \ │ caps duo │ left │ rght │                │ &ht_cl L_KEYPAD bspc │ &ht_cl L_FTOOlsft del │   end    │   pgdn   │ &ht_cl L_MEDIA ent │ spc │                   │ up │ down │ [ │ ] │ lang │
-//    └───────────┴───┴──────────┴──────┴──────┘                └──────────────────────┴───────────────────────┴──────────┴──────────┴────────────────────┴─────┘                   └────┴──────┴───┴───┴──────┘
+  &kp GRAVE    &kp N1        &kp N2            &kp N3     &kp N4                  &kp N5   &kp PSCRN                                                                                                                                                              &td_keypad   &kp N6   &kp N7   &kp N8      &kp N9     &kp N0     &kp EQUAL
+  &kp TAB      &kp Q         &kp W             &kp F      &kp P                   &kp B    &tog L_HYPRLAND                                                                                                                                                        &td_layout   &kp J    &kp L    &kp U       &kp Y      &kp SEMI   &kp MINUS
+  &kp ESC      &hrm LGUI A   &kp R             &kp S      &kp T                   &kp G    &ht_dfn_mfst LG(LC(LA(LEFT))) LG(LC(LA(RIGHT)))                          &kp LCTRL             &sk LALT                 &sk LGUI    &kp RCTRL                          &none        &kp M    &kp N    &kp E       &kp I      &kp O      &kp SQT
+  &kp LSHFT    &kp Z         &kp X             &kp C      &kp D                   &kp V                                                                                                   &ht_cl L_HYPRLAND HOME   &kp PG_UP                                                   &kp K    &kp H    &kp COMMA   &kp DOT    &kp FSLH   &kp RSHFT
+  &sl L_APPS   &kp BSLH      &cw_caps CAPS 0   &kp LEFT   &ht_cl L_FTOOLS RIGHT                                                              &ht_cl L_ARROWS BSPC   &ht_cl L_KEYPAD DEL   &kp END                  &kp PG_DN   &ht_cl L_MEDIA ENTER   &kp SPACE                         &kp UP   &kp DOWN    &kp LBKT   &kp RBKT   &ht_dfn_mfst LG(LC(L)) LG(LS(L))
+//    ┌───────────┬─────────────┬──────────┬──────┬────────────────────────┬───┬──────────────────┐                                                                                                             ┌───────────────┬───┬────┬──────┬───┬───┬──────┐
+//    │     `     │      1      │    2     │  3   │           4            │ 5 │       pscr       │                                                                                                             │  tog KEYPAD   │ 6 │ 7  │  8   │ 9 │ 0 │  =   │
+//    ├───────────┼─────────────┼──────────┼──────┼────────────────────────┼───┼──────────────────┤                                                                                                             ├───────────────┼───┼────┼──────┼───┼───┼──────┤
+//    │    tab    │      Q      │    W     │  F   │           P            │ B │ tog L_HYPRlaltND │                                                                                                             │ to QWERTY/MAC │ J │ L  │  U   │ Y │ ; │  -   │
+//    ├───────────┼─────────────┼──────────┼──────┼────────────────────────┼───┼──────────────────┤                      ┌─────────────────────┬──────────────────────────┬──────────┬────────────────────┐     ├───────────────┼───┼────┼──────┼───┼───┼──────┤
+//    │    esc    │ &hrm lgui A │    R     │  S   │           T            │ G │    < worksp >    │                      │        lctl         │         &sk lalt         │ &sk lgui │        rctl        │     │               │ M │ N  │  E   │ I │ O │  '   │
+//    ├───────────┼─────────────┼──────────┼──────┼────────────────────────┼───┼──────────────────┘                      └─────────────────────┼──────────────────────────┼──────────┼────────────────────┘     └───────────────┼───┼────┼──────┼───┼───┼──────┤
+//    │   lsft    │      Z      │    X     │  C   │           D            │ V │                                                               │ &ht_cl L_HYPRlaltND home │   pgup   │                                          │ K │ H  │  ,   │ . │ / │ rsft │
+//    ├───────────┼─────────────┼──────────┼──────┼────────────────────────┼───┘                  ┌──────────────────────┬─────────────────────┼──────────────────────────┼──────────┼────────────────────┬─────┐               └───┼────┼──────┼───┼───┼──────┤
+//    │ sl L_APPS │      \      │ caps duo │ left │ &ht_cl L_FTOOlsft rght │                      │ &ht_cl L_ARROWS bspc │ &ht_cl L_KEYPAD del │           end            │   pgdn   │ &ht_cl L_MEDIA ent │ spc │                   │ up │ down │ [ │ ] │ lang │
+//    └───────────┴─────────────┴──────────┴──────┴────────────────────────┘                      └──────────────────────┴─────────────────────┴──────────────────────────┴──────────┴────────────────────┴─────┘                   └────┴──────┴───┴───┴──────┘
       >;
     };
     qwerty { 
@@ -443,7 +471,24 @@
     tools_mac { 
     // TODO: finish
       display-name = "Tools MAC";    
-      status = "reserved";
+      bindings = <
+  &none   &none   &none   &none   &none   &none   &none                                                   &none   &none   &none   &none   &none   &none   &none
+  &none   &none   &none   &none   &none   &none   &none                                                   &none   &none   &none   &none   &none   &none   &none
+  &none   &none   &none   &none   &none   &none   &none           &none   &none   &none   &none           &none   &none   &none   &none   &none   &none   &none
+  &none   &none   &none   &none   &none   &none                           &none   &none                           &none   &none   &none   &none   &none   &none
+  &none   &none   &none   &none   &none                   &none   &none   &none   &none   &none   &none                   &none   &none   &none   &none   &none
+//    ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┐                                   ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┐
+//    │     │     │     │     │     │     │     │                                   │     │     │     │     │     │     │     │
+//    ├─────┼─────┼─────┼─────┼─────┼─────┼─────┤                                   ├─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+//    │     │     │     │     │     │     │     │                                   │     │     │     │     │     │     │     │
+//    ├─────┼─────┼─────┼─────┼─────┼─────┼─────┤     ┌─────┬─────┬─────┬─────┐     ├─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+//    │     │     │     │     │     │     │     │     │     │     │     │     │     │     │     │     │     │     │     │     │
+//    ├─────┼─────┼─────┼─────┼─────┼─────┼─────┘     └─────┼─────┼─────┼─────┘     └─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+//    │     │     │     │     │     │     │                 │     │     │                 │     │     │     │     │     │     │
+//    ├─────┼─────┼─────┼─────┼─────┼─────┘     ┌─────┬─────┼─────┼─────┼─────┬─────┐     └─────┼─────┼─────┼─────┼─────┼─────┤
+//    │     │     │     │     │     │           │     │     │     │     │     │     │           │     │     │     │     │     │
+//    └─────┴─────┴─────┴─────┴─────┘           └─────┴─────┴─────┴─────┴─────┴─────┘           └─────┴─────┴─────┴─────┴─────┘
+      >;
     };
     hyprland { 
     // TODO: finish
@@ -456,24 +501,25 @@
     // TODO: maybe remove arrows because I always have modificators
     // TODO: comments for left and right side
     // TODO: maybe add &sk 
+    // TODO: &tog L_HYPRLAND   
       display-name = "Hyprland";
       bindings = <
-  &none                              &kp LG(N1)               &kp LG(N2)               &kp LG(N3)      &kp LG(N4)          &kp LG(N5)      &kp LG(N6)                                                                         &none                            &none           &kp LG(N7)      &kp LG(N8)      &kp LG(N9)      &kp LG(N0)   &none
-  &none                              &sk LSHFT                &sk LS(LALT)             &kp LG(UP)      &kt LS(LCTRL)       &kp LG(LA(U))   &ht_dfn_mfst LG(LS(A)) LG(A)                                                       &none                            &kp LG(EQUAL)   &kp LG(KP_N7)   &kp LG(KP_N8)   &kp LG(KP_N9)   &none        &none
-  &ht_dfn_mfst LG(J) LG(LC(J))       &sk LCTRL                &kp LG(LEFT)             &kp LG(DOWN)    &kp LG(RIGHT)       &sl L_HYPR_GR   &ht_mo_sl L_HYPR_GR                    &trans   &trans   &trans   &trans           &ht_mo_tog L_HYPR_GR L_HYPR_GR   &kp LG(RBKT)    &kp LG(KP_N4)   &kp LG(KP_N5)   &kp LG(KP_N6)   &none        &none
-  &ht_dfn_mfst LG(LA(J)) LG(LS(J))   &sk LALT                 &td_a3_h_res             &kp LG(LA(S))   &kp LG(LC(LA(H)))   &none                                                           &none    &none                                                      &kp LG(LBKT)    &kp LG(KP_N1)   &kp LG(KP_N2)   &kp LG(KP_N3)   &none        &trans
-  &kp LG(LA(M))                      &kp LG(LS(LC(LA(N1))))   &kp LG(LS(LC(LA(N2))))   &none           &none                                                              &none   &none    &none    &none    &none    &none                                                    &kp LG(KP_N0)   &none           &none           &none        &none
-//    ┌──────────────────────────────────────────┬──────────┬────────────────┬────────────┬───────────────┬───────────────┬────────────────────────────────────┐                                   ┌────────────────────────────────┬─────────────┬─────────┬─────────┬─────────┬─────────┬─────┐
-//    │                                          │ lgui(1)  │    lgui(2)     │  lgui(3)   │    lgui(4)    │    lgui(5)    │              lgui(6)               │                                   │                                │             │ lgui(7) │ lgui(8) │ lgui(9) │ lgui(0) │     │
-//    ├──────────────────────────────────────────┼──────────┼────────────────┼────────────┼───────────────┼───────────────┼────────────────────────────────────┤                                   ├────────────────────────────────┼─────────────┼─────────┼─────────┼─────────┼─────────┼─────┤
-//    │                                          │ &sk lsft │ &sk lsft(lalt) │  lgui(up)  │ kt lsft(lctl) │ lgui(lalt(U)) │ &ht_dfn_mfst lgui(lsft(A)) lgui(A) │                                   │                                │  sett_nvim  │ lgui(7) │ lgui(8) │ lgui(9) │         │     │
-//    ├──────────────────────────────────────────┼──────────┼────────────────┼────────────┼───────────────┼───────────────┼────────────────────────────────────┤     ┌─────┬─────┬─────┬─────┐     ├────────────────────────────────┼─────────────┼─────────┼─────────┼─────────┼─────────┼─────┤
-//    │    &ht_dfn_mfst lgui(J) lgui(lctl(J))    │ &sk lctl │   lgui(left)   │ lgui(down) │  lgui(rght)   │ sl L_HYPR_GR  │        &ht_mo_sl L_HYPR_GR         │     │  &  │  &  │  &  │  &  │     │ &ht_mo_tog L_HYPR_GR L_HYPR_GR │  dev_nvim   │ lgui(4) │ lgui(5) │ lgui(6) │         │     │
-//    ├──────────────────────────────────────────┼──────────┼────────────────┼────────────┼───────────────┼───────────────┼────────────────────────────────────┘     └─────┼─────┼─────┼─────┘     └────────────────────────────────┼─────────────┼─────────┼─────────┼─────────┼─────────┼─────┤
-//    │ &ht_dfn_mfst lgui(lalt(J)) lgui(lsft(J)) │ &sk lalt │  &td_a3_h_res  │   center   │  cls special  │               │                                                │     │     │                                            │ trader_nvim │ lgui(1) │ lgui(2) │ lgui(3) │         │  &  │
-//    ├──────────────────────────────────────────┼──────────┼────────────────┼────────────┼───────────────┼───────────────┘                                    ┌─────┬─────┼─────┼─────┼─────┬─────┐                                └─────────────┼─────────┼─────────┼─────────┼─────────┼─────┤
-//    │                 swap mon                 │  mon 1   │     mon 2      │            │               │                                                    │     │     │     │     │     │     │                                              │ lgui(0) │         │         │         │     │
-//    └──────────────────────────────────────────┴──────────┴────────────────┴────────────┴───────────────┘                                                    └─────┴─────┴─────┴─────┴─────┴─────┘                                              └─────────┴─────────┴─────────┴─────────┴─────┘
+  &none                              &kp LG(N1)               &kp LG(N2)               &kp LG(N3)      &kp LG(N4)          &kp LG(N5)      &kp LG(N6)                                                                                   &none                            &none           &kp LG(N7)      &kp LG(N8)      &kp LG(N9)      &kp LG(N0)   &none
+  &none                              &sk LSHFT                &sk LS(LALT)             &kp LG(UP)      &kt LS(LCTRL)       &kp LG(LA(U))   &ht_dfn_mfst LG(LS(A)) LG(A)                                                                 &none                            &kp LG(EQUAL)   &kp LG(KP_N7)   &kp LG(KP_N8)   &kp LG(KP_N9)   &none        &none
+  &ht_dfn_mfst LG(J) LG(LC(J))       &sk LCTRL                &kp LG(LEFT)             &kp LG(DOWN)    &kp LG(RIGHT)       &sl L_HYPR_GR   &ht_mo_sl L_HYPR_GR                              &trans   &trans   &trans   &trans           &ht_mo_tog L_HYPR_GR L_HYPR_GR   &kp LG(RBKT)    &kp LG(KP_N4)   &kp LG(KP_N5)   &kp LG(KP_N6)   &none        &none
+  &ht_dfn_mfst LG(LA(J)) LG(LS(J))   &sk LALT                 &td_a3_h_res             &kp LG(LA(S))   &kp LG(LC(LA(H)))   &none                                                                     &none    &none                                                      &kp LG(LBKT)    &kp LG(KP_N1)   &kp LG(KP_N2)   &kp LG(KP_N3)   &none        &trans
+  &kp LG(LA(M))                      &kp LG(LS(LC(LA(N1))))   &kp LG(LS(LC(LA(N2))))   &none           &none                                                              &tog L_HYPRLAND   &none    &none    &none    &none    &none                                                    &kp LG(KP_N0)   &none           &none           &none        &none
+//    ┌──────────────────────────────────────────┬──────────┬────────────────┬────────────┬───────────────┬───────────────┬────────────────────────────────────┐                                                ┌────────────────────────────────┬─────────────┬─────────┬─────────┬─────────┬─────────┬─────┐
+//    │                                          │ lgui(1)  │    lgui(2)     │  lgui(3)   │    lgui(4)    │    lgui(5)    │              lgui(6)               │                                                │                                │             │ lgui(7) │ lgui(8) │ lgui(9) │ lgui(0) │     │
+//    ├──────────────────────────────────────────┼──────────┼────────────────┼────────────┼───────────────┼───────────────┼────────────────────────────────────┤                                                ├────────────────────────────────┼─────────────┼─────────┼─────────┼─────────┼─────────┼─────┤
+//    │                                          │ &sk lsft │ &sk lsft(lalt) │  lgui(up)  │ kt lsft(lctl) │ lgui(lalt(U)) │ &ht_dfn_mfst lgui(lsft(A)) lgui(A) │                                                │                                │  sett_nvim  │ lgui(7) │ lgui(8) │ lgui(9) │         │     │
+//    ├──────────────────────────────────────────┼──────────┼────────────────┼────────────┼───────────────┼───────────────┼────────────────────────────────────┤                  ┌─────┬─────┬─────┬─────┐     ├────────────────────────────────┼─────────────┼─────────┼─────────┼─────────┼─────────┼─────┤
+//    │    &ht_dfn_mfst lgui(J) lgui(lctl(J))    │ &sk lctl │   lgui(left)   │ lgui(down) │  lgui(rght)   │ sl L_HYPR_GR  │        &ht_mo_sl L_HYPR_GR         │                  │  &  │  &  │  &  │  &  │     │ &ht_mo_tog L_HYPR_GR L_HYPR_GR │  dev_nvim   │ lgui(4) │ lgui(5) │ lgui(6) │         │     │
+//    ├──────────────────────────────────────────┼──────────┼────────────────┼────────────┼───────────────┼───────────────┼────────────────────────────────────┘                  └─────┼─────┼─────┼─────┘     └────────────────────────────────┼─────────────┼─────────┼─────────┼─────────┼─────────┼─────┤
+//    │ &ht_dfn_mfst lgui(lalt(J)) lgui(lsft(J)) │ &sk lalt │  &td_a3_h_res  │   center   │  cls special  │               │                                                             │     │     │                                            │ trader_nvim │ lgui(1) │ lgui(2) │ lgui(3) │         │  &  │
+//    ├──────────────────────────────────────────┼──────────┼────────────────┼────────────┼───────────────┼───────────────┘                                    ┌──────────────────┬─────┼─────┼─────┼─────┬─────┐                                └─────────────┼─────────┼─────────┼─────────┼─────────┼─────┤
+//    │                 swap mon                 │  mon 1   │     mon 2      │            │               │                                                    │ tog L_HYPRlaltND │     │     │     │     │     │                                              │ lgui(0) │         │         │         │     │
+//    └──────────────────────────────────────────┴──────────┴────────────────┴────────────┴───────────────┘                                                    └──────────────────┴─────┴─────┴─────┴─────┴─────┘                                              └─────────┴─────────┴─────────┴─────────┴─────┘
       >;
     };
     hypr_gr { 
@@ -567,20 +613,26 @@
 //    └─────┴─────┴─────┴─────────┴───────────────┘           └────┴─────┴─────┴─────┴─────┴─────┘           └─────┴─────┴─────┴─────┴─────┘
       >;
     };
-
-    extra2 { 
-      display-name = "Purple";    
-      status = "reserved";
-    };
-
-    extra3 { 
-      display-name = "Cyan";    
-      status = "reserved";
-    };
-
-    extra4 { 
-      display-name = "Yellow";    
-      status = "reserved";
+    arrows { 
+      display-name = "Arrows";
+      bindings = <
+  &none   &none      &none      &none       &none        &none   &none                                                   &none   &none      &none       &none       &none       &none     &none
+  &none   &none      &none      &none       &none        &none   &none                                                   &none   &none      &none       &kp UP      &none       &none     &none
+  &none   &kp LGUI   &kp LALT   &kp LCTRL   &kp LSHIFT   &none   &none           &none   &none   &none   &none           &none   &kp HOME   &kp LEFT    &kp DOWN    &kp RIGHT   &kp END   &none
+  &none   &none      &none      &none       &none        &none                           &none   &none                           &none      &kp PG_UP   &kp PG_DN   &none       &none     &none
+  &none   &none      &none      &none       &none                        &none   &none   &none   &none   &none   &none                      &none       &none       &none       &none     &none
+//    ┌─────┬──────┬──────┬──────┬──────┬─────┬─────┐                                   ┌─────┬──────┬──────┬──────┬──────┬─────┬─────┐
+//    │     │      │      │      │      │     │     │                                   │     │      │      │      │      │     │     │
+//    ├─────┼──────┼──────┼──────┼──────┼─────┼─────┤                                   ├─────┼──────┼──────┼──────┼──────┼─────┼─────┤
+//    │     │      │      │      │      │     │     │                                   │     │      │      │  up  │      │     │     │
+//    ├─────┼──────┼──────┼──────┼──────┼─────┼─────┤     ┌─────┬─────┬─────┬─────┐     ├─────┼──────┼──────┼──────┼──────┼─────┼─────┤
+//    │     │ lgui │ lalt │ lctl │ lsft │     │     │     │     │     │     │     │     │     │ home │ left │ down │ rght │ end │     │
+//    ├─────┼──────┼──────┼──────┼──────┼─────┼─────┘     └─────┼─────┼─────┼─────┘     └─────┼──────┼──────┼──────┼──────┼─────┼─────┤
+//    │     │      │      │      │      │     │                 │     │     │                 │      │ pgup │ pgdn │      │     │     │
+//    ├─────┼──────┼──────┼──────┼──────┼─────┘     ┌─────┬─────┼─────┼─────┼─────┬─────┐     └──────┼──────┼──────┼──────┼─────┼─────┤
+//    │     │      │      │      │      │           │     │     │     │     │     │     │            │      │      │      │     │     │
+//    └─────┴──────┴──────┴──────┴──────┘           └─────┴─────┴─────┴─────┴─────┴─────┘            └──────┴──────┴──────┴─────┴─────┘
+      >;
     };
   };
 };
