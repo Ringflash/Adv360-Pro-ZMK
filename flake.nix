@@ -41,7 +41,7 @@
           ];
 
           board = "adv360_%PART%";
-          enableZmkStudio = true;
+          enableZmkStudio = false;
 
           zephyrDepsHash = "sha256-0tNjgMiepoGr/eGPvxSyRaKTekoZ8KqAAoLG3HAPKq8=";
 
