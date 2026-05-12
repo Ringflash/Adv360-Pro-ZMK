@@ -4,10 +4,10 @@
 #include <dt-bindings/zmk/rgb.h>
 #include <dt-bindings/zmk/stp.h>
 #include <dt-bindings/zmk/backlight.h>
-
-#define ZMK_POINTING_DEFAULT_MOVE_VAL 1800 
+#define ZMK_POINTING_DEFAULT_MOVE_VAL 1200 
 #define ZMK_POINTING_DEFAULT_SCRL_VAL 20
 #include <dt-bindings/zmk/pointing.h>
+#include <input/processors.dtsi>
 
 /* PREPROCESSOR */
 // Constants
@@ -23,13 +23,14 @@
 #define L_KEYPAD     4
 #define L_ARROWS     5
 #define L_MOUSE      6
-#define L_FTOOLS     7
-#define L_FTOOLS_MAC 8
-#define L_HYPRLAND   9
-#define L_HYPR_GR    10
-#define L_AEROSPACE  11
-#define L_APPS       12
-#define L_EDITOR     13
+#define L_MOUSE_TRB  7
+#define L_FTOOLS     8
+#define L_FTOOLS_MAC 9
+#define L_HYPRLAND   10
+#define L_HYPR_GR    11
+#define L_AEROSPACE  12
+#define L_APPS       13
+#define L_EDITOR     14
 // Macros
 // - tap, hold, double tap
 #define TD_A1(NAME, KP) \
@@ -105,7 +106,13 @@
 &caps_word {
     continue-list = <UNDERSCORE MINUS BACKSPACE DELETE>;
 };
-
+&mmv {
+    time-to-max-speed-ms = <400>;
+    delay-ms = <0>;
+};
+&msc {
+    delay-ms = <0>;
+};
 /* CONFIG */
 / {
     behaviors {
@@ -142,6 +149,15 @@
             flavor = "hold-preferred"; 
             tapping-term-ms = <TAP_TERM_SLOW>;
             quick-tap-ms = <175>;     
+            retro-tap;          
+            bindings = <&mo>, <&kp>;
+        };
+        ht_cl_tp: ht_cluster_layer_tap_preferred {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred"; 
+            tapping-term-ms = <TAP_TERM_FAST>;
+            quick-tap-ms = <TAP_TERM_FAST>;     
             retro-tap;          
             bindings = <&mo>, <&kp>;
         };
@@ -324,22 +340,22 @@
     default_layer { 
       display-name = "Base";
       bindings = <
-  &kp GRAVE    &kp N1     &kp N2            &kp N3     &kp N4      &kp N5   &kp PSCRN                                                                                                                                                              &td_keypad   &kp N6   &kp N7   &kp N8      &kp N9     &kp N0     &kp EQUAL
-  &kp TAB      &kp Q      &kp W             &kp F      &kp P       &kp B    &ht_tog_sl L_FTOOLS L_FTOOLS                                                                                                                                           &td_layout   &kp J    &kp L    &kp U       &kp Y      &kp SEMI   &kp MINUS
-  &esc_ent     &kp A      &kp R             &kp S      &kp T       &kp G    &ht_dfn_mfst LG(LC(LA(LEFT))) LG(LC(LA(RIGHT)))                          &sk LCTRL             &sk LALT   &sk LALT      &sk RCTRL                                      &none        &kp M    &kp N    &kp E       &kp I      &kp O      &kp SQT
-  &kp LSHFT    &kp Z      &kp X             &kp C      &kp D       &kp V                                                                                                   &sk LGUI   &sk RGUI                                                                  &kp K    &kp H    &kp COMMA   &kp DOT    &kp FSLH   &kp RSHFT
-  &sl L_APPS   &kp BSLH   &cw_caps CAPS 0   &kp LEFT   &kp RIGHT                                                              &ht_cl L_ARROWS BSPC   &ht_cl L_KEYPAD DEL   &td_hypr   &sl L_MEDIA   &ht_cl L_EDITOR ENTER   &ht_cl L_MOUSE SPACE                         &kp UP   &kp DOWN    &kp LBKT   &kp RBKT   &ht_dfn_mfst LG(LC(L)) LG(LS(L))
-//    ┌───────────┬───┬──────────┬──────┬──────┬───┬──────────────────────────────────┐                                                                                                               ┌───────────────┬───┬────┬──────┬───┬───┬──────┐
-//    │     `     │ 1 │    2     │  3   │  4   │ 5 │               pscr               │                                                                                                               │  tog KEYPAD   │ 6 │ 7  │  8   │ 9 │ 0 │  =   │
-//    ├───────────┼───┼──────────┼──────┼──────┼───┼──────────────────────────────────┤                                                                                                               ├───────────────┼───┼────┼──────┼───┼───┼──────┤
-//    │    tab    │ Q │    W     │  F   │  P   │ B │ &ht_tog_sl L_FTOOlsft L_FTOOlsft │                                                                                                               │ to QWERTY/MAC │ J │ L  │  U   │ Y │ ; │  -   │
-//    ├───────────┼───┼──────────┼──────┼──────┼───┼──────────────────────────────────┤                      ┌─────────────────────┬──────────┬────────────┬─────────────────────┐                    ├───────────────┼───┼────┼──────┼───┼───┼──────┤
-//    │ &esc_ent  │ A │    R     │  S   │  T   │ G │            < worksp >            │                      │      &sk lctl       │ &sk lalt │  &sk lalt  │      &sk rctl       │                    │               │ M │ N  │  E   │ I │ O │  '   │
-//    ├───────────┼───┼──────────┼──────┼──────┼───┼──────────────────────────────────┘                      └─────────────────────┼──────────┼────────────┼─────────────────────┘                    └───────────────┼───┼────┼──────┼───┼───┼──────┤
-//    │   lsft    │ Z │    X     │  C   │  D   │ V │                                                                               │ &sk lgui │  &sk rgui  │                                                          │ K │ H  │  ,   │ . │ / │ rsft │
-//    ├───────────┼───┼──────────┼──────┼──────┼───┘                                  ┌──────────────────────┬─────────────────────┼──────────┼────────────┼─────────────────────┬────────────────────┐               └───┼────┼──────┼───┼───┼──────┤
-//    │ sl L_APPS │ \ │ caps duo │ left │ rght │                                      │ &ht_cl L_ARROWS bspc │ &ht_cl L_KEYPAD del │ &td_hypr │ sl L_MEDIA │ &ht_cl L_EDITOR ent │ &ht_cl L_MOUSE spc │                   │ up │ down │ [ │ ] │ lang │
-//    └───────────┴───┴──────────┴──────┴──────┘                                      └──────────────────────┴─────────────────────┴──────────┴────────────┴─────────────────────┴────────────────────┘                   └────┴──────┴───┴───┴──────┘
+  &kp GRAVE    &kp N1     &kp N2            &kp N3     &kp N4      &kp N5   &kp PSCRN                                                                                                                                                                 &td_keypad   &kp N6   &kp N7   &kp N8      &kp N9     &kp N0     &kp EQUAL
+  &kp TAB      &kp Q      &kp W             &kp F      &kp P       &kp B    &ht_tog_sl L_FTOOLS L_FTOOLS                                                                                                                                              &td_layout   &kp J    &kp L    &kp U       &kp Y      &kp SEMI   &kp MINUS
+  &esc_ent     &kp A      &kp R             &kp S      &kp T       &kp G    &ht_dfn_mfst LG(LC(LA(LEFT))) LG(LC(LA(RIGHT)))                          &sk LCTRL             &sk LALT   &sk LALT      &sk RCTRL                                         &none        &kp M    &kp N    &kp E       &kp I      &kp O      &kp SQT
+  &kp LSHFT    &kp Z      &kp X             &kp C      &kp D       &kp V                                                                                                   &sk LGUI   &sk RGUI                                                                     &kp K    &kp H    &kp COMMA   &kp DOT    &kp FSLH   &kp RSHFT
+  &sl L_APPS   &kp BSLH   &cw_caps CAPS 0   &kp LEFT   &kp RIGHT                                                              &ht_cl L_ARROWS BSPC   &ht_cl L_KEYPAD DEL   &td_hypr   &sl L_MEDIA   &ht_cl L_EDITOR ENTER   &ht_cl_tp L_MOUSE SPACE                         &kp UP   &kp DOWN    &kp LBKT   &kp RBKT   &ht_dfn_mfst LG(LC(L)) LG(LS(L))
+//    ┌───────────┬───┬──────────┬──────┬──────┬───┬──────────────────────────────────┐                                                                                                                  ┌───────────────┬───┬────┬──────┬───┬───┬──────┐
+//    │     `     │ 1 │    2     │  3   │  4   │ 5 │               pscr               │                                                                                                                  │  tog KEYPAD   │ 6 │ 7  │  8   │ 9 │ 0 │  =   │
+//    ├───────────┼───┼──────────┼──────┼──────┼───┼──────────────────────────────────┤                                                                                                                  ├───────────────┼───┼────┼──────┼───┼───┼──────┤
+//    │    tab    │ Q │    W     │  F   │  P   │ B │ &ht_tog_sl L_FTOOlsft L_FTOOlsft │                                                                                                                  │ to QWERTY/MAC │ J │ L  │  U   │ Y │ ; │  -   │
+//    ├───────────┼───┼──────────┼──────┼──────┼───┼──────────────────────────────────┤                      ┌─────────────────────┬──────────┬────────────┬─────────────────────┐                       ├───────────────┼───┼────┼──────┼───┼───┼──────┤
+//    │ &esc_ent  │ A │    R     │  S   │  T   │ G │            < worksp >            │                      │      &sk lctl       │ &sk lalt │  &sk lalt  │      &sk rctl       │                       │               │ M │ N  │  E   │ I │ O │  '   │
+//    ├───────────┼───┼──────────┼──────┼──────┼───┼──────────────────────────────────┘                      └─────────────────────┼──────────┼────────────┼─────────────────────┘                       └───────────────┼───┼────┼──────┼───┼───┼──────┤
+//    │   lsft    │ Z │    X     │  C   │  D   │ V │                                                                               │ &sk lgui │  &sk rgui  │                                                             │ K │ H  │  ,   │ . │ / │ rsft │
+//    ├───────────┼───┼──────────┼──────┼──────┼───┘                                  ┌──────────────────────┬─────────────────────┼──────────┼────────────┼─────────────────────┬───────────────────────┐               └───┼────┼──────┼───┼───┼──────┤
+//    │ sl L_APPS │ \ │ caps duo │ left │ rght │                                      │ &ht_cl L_ARROWS bspc │ &ht_cl L_KEYPAD del │ &td_hypr │ sl L_MEDIA │ &ht_cl L_EDITOR ent │ &ht_cl_tp L_MOUSE spc │                   │ up │ down │ [ │ ] │ lang │
+//    └───────────┴───┴──────────┴──────┴──────┘                                      └──────────────────────┴─────────────────────┴──────────┴────────────┴─────────────────────┴───────────────────────┘                   └────┴──────┴───┴───┴──────┘
       >;
     };
     qwerty { 
@@ -456,22 +472,43 @@
     // TODO: turbo and precise layers?
       display-name = "Mouse";
       bindings = <
-  &none    &none      &none      &none       &none        &none   &none                                                           &none   &none   &none            &none            &none             &none             &none
-  &none    &none      &none      &none       &none        &none   &none                                                           &none   &none   &mkp MB4         &mmv MOVE_UP     &mkp MB5          &none             &none
-  &trans   &kp LGUI   &kp LALT   &kp LCTRL   &kp LSHIFT   &none   &none               &mkp MCLK   &none   &none   &none           &none   &none   &mmv MOVE_LEFT   &mmv MOVE_DOWN   &mmv MOVE_RIGHT   &none             &none
-  &none    &none      &none      &none       &none        &none                                   &none   &none                           &none   &msc SCRL_UP     &msc SCRL_DOWN   &msc SCRL_LEFT    &msc SCRL_RIGHT   &trans
-  &none    &none      &none      &none       &none                        &mkp LCLK   &mkp RCLK   &none   &none   &none   &none                   &none            &none            &none             &none             &none
-//    ┌─────┬──────┬──────┬──────┬──────┬─────┬─────┐                                     ┌─────┬─────┬────────────┬────────────┬─────────────┬────────────────┬─────┐
-//    │     │      │      │      │      │     │     │                                     │     │     │            │            │             │                │     │
-//    ├─────┼──────┼──────┼──────┼──────┼─────┼─────┤                                     ├─────┼─────┼────────────┼────────────┼─────────────┼────────────────┼─────┤
-//    │     │      │      │      │      │     │     │                                     │     │     │    mbck    │  mouse up  │    mfwd     │                │     │
-//    ├─────┼──────┼──────┼──────┼──────┼─────┼─────┤      ┌──────┬─────┬─────┬─────┐     ├─────┼─────┼────────────┼────────────┼─────────────┼────────────────┼─────┤
-//    │  &  │ lgui │ lalt │ lctl │ lsft │     │     │      │ mclk │     │     │     │     │     │     │ mouse left │ mouse down │ mouse right │                │     │
-//    ├─────┼──────┼──────┼──────┼──────┼─────┼─────┘      └──────┼─────┼─────┼─────┘     └─────┼─────┼────────────┼────────────┼─────────────┼────────────────┼─────┤
-//    │     │      │      │      │      │     │                   │     │     │                 │     │  scrl up   │ scrl down  │  scrl left  │ &msc SCRL_rght │  &  │
-//    ├─────┼──────┼──────┼──────┼──────┼─────┘     ┌──────┬──────┼─────┼─────┼─────┬─────┐     └─────┼────────────┼────────────┼─────────────┼────────────────┼─────┤
-//    │     │      │      │      │      │           │ lclk │ rclk │     │     │     │     │           │            │            │             │                │     │
-//    └─────┴──────┴──────┴──────┴──────┘           └──────┴──────┴─────┴─────┴─────┴─────┘           └────────────┴────────────┴─────────────┴────────────────┴─────┘
+  &none    &none      &none      &none       &none             &none   &none                                                           &none   &none   &none            &none            &none             &none             &none
+  &none    &none      &none      &none       &none             &none   &none                                                           &none   &none   &mkp MB4         &mmv MOVE_UP     &mkp MB5          &none             &none
+  &trans   &kp LGUI   &kp LALT   &kp LCTRL   &kp LSHIFT        &none   &none               &mkp MCLK   &none   &none   &none           &none   &none   &mmv MOVE_LEFT   &mmv MOVE_DOWN   &mmv MOVE_RIGHT   &none             &none
+  &none    &none      &none      &none       &mo L_MOUSE_TRB   &none                                   &none   &none                           &none   &msc SCRL_UP     &msc SCRL_DOWN   &msc SCRL_LEFT    &msc SCRL_RIGHT   &none
+  &none    &none      &none      &none       &none                             &mkp LCLK   &mkp RCLK   &none   &none   &none   &none                   &none            &none            &none             &none             &none
+//    ┌─────┬──────┬──────┬──────┬────────────────┬─────┬─────┐                                     ┌─────┬─────┬────────────┬────────────┬─────────────┬────────────────┬─────┐
+//    │     │      │      │      │                │     │     │                                     │     │     │            │            │             │                │     │
+//    ├─────┼──────┼──────┼──────┼────────────────┼─────┼─────┤                                     ├─────┼─────┼────────────┼────────────┼─────────────┼────────────────┼─────┤
+//    │     │      │      │      │                │     │     │                                     │     │     │    mbck    │  mouse up  │    mfwd     │                │     │
+//    ├─────┼──────┼──────┼──────┼────────────────┼─────┼─────┤      ┌──────┬─────┬─────┬─────┐     ├─────┼─────┼────────────┼────────────┼─────────────┼────────────────┼─────┤
+//    │  &  │ lgui │ lalt │ lctl │      lsft      │     │     │      │ mclk │     │     │     │     │     │     │ mouse left │ mouse down │ mouse right │                │     │
+//    ├─────┼──────┼──────┼──────┼────────────────┼─────┼─────┘      └──────┼─────┼─────┼─────┘     └─────┼─────┼────────────┼────────────┼─────────────┼────────────────┼─────┤
+//    │     │      │      │      │ mo L_MOUSE_TRB │     │                   │     │     │                 │     │  scrl up   │ scrl down  │  scrl left  │ &msc SCRL_rght │     │
+//    ├─────┼──────┼──────┼──────┼────────────────┼─────┘     ┌──────┬──────┼─────┼─────┼─────┬─────┐     └─────┼────────────┼────────────┼─────────────┼────────────────┼─────┤
+//    │     │      │      │      │                │           │ lclk │ rclk │     │     │     │     │           │            │            │             │                │     │
+//    └─────┴──────┴──────┴──────┴────────────────┘           └──────┴──────┴─────┴─────┴─────┴─────┘           └────────────┴────────────┴─────────────┴────────────────┴─────┘
+      >;
+    };
+    mouse_turbo { 
+      display-name = "Mouse turbo layer";
+      bindings = <
+  &none   &none   &none   &none   &none   &none   &none                                                           &none   &none   &none            &none            &none             &none             &none
+  &none   &none   &none   &none   &none   &none   &none                                                           &none   &none   &none            &mmv MOVE_UP     &none             &none             &none
+  &none   &none   &none   &none   &none   &none   &none               &mkp MCLK   &none   &none   &none           &none   &none   &mmv MOVE_LEFT   &mmv MOVE_DOWN   &mmv MOVE_RIGHT   &none             &none
+  &none   &none   &none   &none   &none   &none                                   &none   &none                           &none   &msc SCRL_UP     &msc SCRL_DOWN   &msc SCRL_LEFT    &msc SCRL_RIGHT   &none
+  &none   &none   &none   &none   &none                   &mkp LCLK   &mkp RCLK   &none   &none   &none   &none                   &none            &none            &none             &none             &none
+//    ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┐                                     ┌─────┬─────┬────────────┬────────────┬─────────────┬────────────────┬─────┐
+//    │     │     │     │     │     │     │     │                                     │     │     │            │            │             │                │     │
+//    ├─────┼─────┼─────┼─────┼─────┼─────┼─────┤                                     ├─────┼─────┼────────────┼────────────┼─────────────┼────────────────┼─────┤
+//    │     │     │     │     │     │     │     │                                     │     │     │            │  mouse up  │             │                │     │
+//    ├─────┼─────┼─────┼─────┼─────┼─────┼─────┤      ┌──────┬─────┬─────┬─────┐     ├─────┼─────┼────────────┼────────────┼─────────────┼────────────────┼─────┤
+//    │     │     │     │     │     │     │     │      │ mclk │     │     │     │     │     │     │ mouse left │ mouse down │ mouse right │                │     │
+//    ├─────┼─────┼─────┼─────┼─────┼─────┼─────┘      └──────┼─────┼─────┼─────┘     └─────┼─────┼────────────┼────────────┼─────────────┼────────────────┼─────┤
+//    │     │     │     │     │     │     │                   │     │     │                 │     │  scrl up   │ scrl down  │  scrl left  │ &msc SCRL_rght │     │
+//    ├─────┼─────┼─────┼─────┼─────┼─────┘     ┌──────┬──────┼─────┼─────┼─────┬─────┐     └─────┼────────────┼────────────┼─────────────┼────────────────┼─────┤
+//    │     │     │     │     │     │           │ lclk │ rclk │     │     │     │     │           │            │            │             │                │     │
+//    └─────┴─────┴─────┴─────┴─────┘           └──────┴──────┴─────┴─────┴─────┴─────┘           └────────────┴────────────┴─────────────┴────────────────┴─────┘
       >;
     };
     tools { 
@@ -627,4 +664,28 @@
       >;
     };
   };
+
+  input_processors {
+    turbo_scroll_scaler: turbo_scroll_scaler {
+            compatible = "zmk,input-processor-scaler";
+            #input-processor-cells = <2>;
+            type = <INPUT_EV_REL>;
+            codes = <INPUT_REL_WHEEL INPUT_REL_HWHEEL>;
+            track-remainders;
+        };
+    };
+};
+
+// Listeners
+&mmv_input_listener {
+    turbo_cursor {
+        layers = <L_MOUSE_TRB>;
+        input-processors = <&zip_xy_scaler 5 1>;
+    };
+};
+&msc_input_listener {
+    turbo_scroll {
+        layers = <L_MOUSE_TRB>;
+        input-processors = <&turbo_scroll_scaler 4 1>;
+    };
 };

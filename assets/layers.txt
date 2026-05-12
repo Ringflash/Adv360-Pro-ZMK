@@ -5,12 +5,13 @@
 #define L_KEYPAD     4
 #define L_ARROWS     5
 #define L_MOUSE      6
-#define L_FTOOLS     7
-#define L_FTOOLS_MAC 8
-#define L_HYPRLAND   9
-#define L_HYPR_GR    10
-#define L_AEROSPACE  11
-#define L_APPS       12
-#define L_EDITOR     13
+#define L_MOUSE_TRB  7
+#define L_FTOOLS     8
+#define L_FTOOLS_MAC 9
+#define L_HYPRLAND   10
+#define L_HYPR_GR    11
+#define L_AEROSPACE  12
+#define L_APPS       13
+#define L_EDITOR     14
 
 #define SYMBOLS
