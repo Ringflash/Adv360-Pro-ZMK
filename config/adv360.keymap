@@ -239,11 +239,18 @@
             bindings = <&none>, <&bt BT_CLR_ALL>; 
         };
         // tap-dance
-        TD_A4(td_a4_h_res, LG(R), LG(LC(R)), LG(LA(R)), LG(LC(LA(R)))); // hyprland, resize window
         TD_A1_DT_TOG_LYR(td_keypad, L_KEYPAD); // toggle keypad layer on double tap
         TD_A1_DT_TO_LYR(td_l_def, L_DEFAULT); // toggle default layer on double tap
         TD_A1_DT_KP(td_sleep_lnx, LG(LS(LA(L)))); // sleep system on Linux
         TD_A1_DT_KP(td_sleep_mac, LC(LA(C_EJECT))); // sleep system on MacOS
+        TD_A4(td_a4_h_res, LG(R), LG(LC(R)), LG(LA(R)), LG(LC(LA(R)))); // hyprland, resize window
+        TD_A4(td_breakpoint, LC(F8), LS(LC(F8)), LS(LC(F3)), LS(LC(LA(F8)))); // editor, breakpoints
+        TD_A3(td_e_methods, LS(LC(D)), LC(I), LC(O)); // editor, methods
+        TD_A3(td_e_refactor, LS(F6), LC(F6), F6); // editor, refactor
+        TD_A3(td_e_sur_life, LC(LA(J)), LS(LA(T)), LC(J)); // editor, surround/live template
+        TD_A3(td_e_f_expand, LC(EQUAL), LC(LA(EQUAL)), LS(LC(EQUAL))); // editor, fold expand
+        TD_A3(td_e_f_collapse, LC(MINUS), LC(LA(MINUS)), LS(LC(MINUS))); // editor, fold collapse
+        TD_A4(td_e_bookmarks, LS(LC(LA(RIGHT_BRACKET))), F11, LS(LC(LA(LEFT_BRACKET))), LS(LC(F11))); // editor, bookmarks
         TD_SL_TOG(td_hypr, L_HYPRLAND); // hyprland layer activation
         // macros
         m_p2: macro_two_param {
@@ -333,6 +340,8 @@
 
 // TODO: comments formatting keyboard for all needed keys
 // TODO: turn off zmk studio
+// TODO: remove retrotap from clusters
+// TODO: no sticky key on left alt?
 
   /* KEYMAP */
   keymap {
@@ -469,7 +478,6 @@
     };
     mouse { 
     // TODO: maybe remove mb4 and mb5 buttons 
-    // TODO: turbo and precise layers?
       display-name = "Mouse";
       bindings = <
   &none    &none      &none      &none       &none             &none   &none                                                           &none   &none   &none            &none            &none             &none             &none
@@ -522,7 +530,7 @@
 //    ┌─────┬───────────────┬───────────────┬───────────────┬─────────────────────────────────┬─────┬─────┐                                              ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┐
 //    │     │               │               │               │                                 │     │     │                                              │     │     │     │     │     │     │     │
 //    ├─────┼───────────────┼───────────────┼───────────────┼─────────────────────────────────┼─────┼─────┤                                              ├─────┼─────┼─────┼─────┼─────┼─────┼─────┤
-//    │     │ lsft(lctl(M)) │ lsft(lctl(C)) │ lsft(lctl(K)) │               f12               │     │     │                                              │     │     │     │     │     │     │     │
+//    │     │ match bracket │ lsft(lctl(C)) │ lsft(lctl(K)) │               f12               │     │     │                                              │     │     │     │     │     │     │     │
 //    ├─────┼───────────────┼───────────────┼───────────────┼─────────────────────────────────┼─────┼─────┤                ┌─────┬─────┬─────┬─────┐     ├─────┼─────┼─────┼─────┼─────┼─────┼─────┤
 //    │     │               │  &m_cp_link   │  &m_srch_tab  │ &ht_dfn_mfst lalt(home) lctl(L) │     │     │                │     │     │     │     │     │     │     │     │     │     │     │     │
 //    ├─────┼───────────────┼───────────────┼───────────────┼─────────────────────────────────┼─────┼─────┘                └─────┼─────┼─────┼─────┘     └─────┼─────┼─────┼─────┼─────┼─────┼─────┤
@@ -642,25 +650,24 @@
       >;
     };
     editor { 
-    // TODO: finish
       display-name = "Editor";
       bindings = <
-  &none   &none   &none   &none       &none               &none   &none                                                    &none   &none   &none   &none   &none   &none   &none
-  &none   &none   &none   &none       &none               &none   &none                                                    &none   &none   &none   &none   &none   &none   &none
-  &none   &none   &none   &none       &kp LC(LA(L))       &none   &none            &none   &none   &none   &none           &none   &none   &none   &none   &none   &none   &none
-  &none   &none   &none   &none       &kp LS(LC(SLASH))   &none                            &none   &none                           &none   &none   &none   &none   &none   &none
-  &none   &none   &none   &kp LC(Y)   &kp LC(SLASH)                       &kp F5   &none   &none   &none   &none   &none                   &none   &none   &none   &none   &none
-//    ┌─────┬─────┬─────┬─────────┬───────────────┬─────┬─────┐                                  ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┐
-//    │     │     │     │         │               │     │     │                                  │     │     │     │     │     │     │     │
-//    ├─────┼─────┼─────┼─────────┼───────────────┼─────┼─────┤                                  ├─────┼─────┼─────┼─────┼─────┼─────┼─────┤
-//    │     │     │     │         │               │     │     │                                  │     │     │     │     │     │     │     │
-//    ├─────┼─────┼─────┼─────────┼───────────────┼─────┼─────┤    ┌─────┬─────┬─────┬─────┐     ├─────┼─────┼─────┼─────┼─────┼─────┼─────┤
-//    │     │     │     │         │ lctl(lalt(L)) │     │     │    │     │     │     │     │     │     │     │     │     │     │     │     │
-//    ├─────┼─────┼─────┼─────────┼───────────────┼─────┼─────┘    └─────┼─────┼─────┼─────┘     └─────┼─────┼─────┼─────┼─────┼─────┼─────┤
-//    │     │     │     │         │ lsft(lctl(/)) │     │                │     │     │                 │     │     │     │     │     │     │
-//    ├─────┼─────┼─────┼─────────┼───────────────┼─────┘     ┌────┬─────┼─────┼─────┼─────┬─────┐     └─────┼─────┼─────┼─────┼─────┼─────┤
-//    │     │     │     │ lctl(Y) │    lctl(/)    │           │ f5 │     │     │     │     │     │           │     │     │     │     │     │
-//    └─────┴─────┴─────┴─────────┴───────────────┘           └────┴─────┴─────┴─────┴─────┴─────┘           └─────┴─────┴─────┴─────┴─────┘
+  &kp LC(F9)                             &ht_dfn_mfst LC(LA(COMMA)) LA(COMMA)   &ht_dfn_mfst LS(LC(LA(F9))) F9     &kp F8                            &ht_dfn_mfst LS(F8) F7   &td_breakpoint                               &ht_dfn_mfst LS(LC(LA(F4))) LS(LC(LA(F3)))                                                                                                            &kp LS(LC(LA(R)))   &kp LS(LC(LA(Q)))                                  &none                   &none                &none                                      &none               &none
+  &ht_dfn_mfst LS(LC(LA(G))) LS(LC(G))   &kp LC(F12)                            &kp LA(INSERT)                     &td_e_methods                     &td_e_refactor           &ht_dfn_mfst LS(LC(SEMI)) LS(LC(LA(SEMI)))   &kp LS(LA(U))                                                                                                                                         &kp LS(LC(LA(Y)))   &ht_dfn_mfst LS(LA(G)) LS(LA(INSERT))              &kp LC(K)               &kp LC(LA(Z))        &ht_dfn_mfst LS(LC(LA(K))) LS(LC(LA(E)))   &kp LS(LA(K))       &none
+  &kp LS(LC(M))                          &td_e_sur_life                         &ht_dfn_mfst LS(ESC) LS(LC(F12))   &ht_dfn_mfst LA(Y) LS(LC(BSPC))   &kp LC(LA(L))            &td_e_bookmarks                              &ht_dfn_mfst LS(LA(DOT)) LS(LA(COMMA))                &ht_dfn_mfst LS(LA(F9)) LS(F9)         &kp LC(F2)   &none   &kp LC(LA(S))                       &kp LS(LC(LA(S)))   &ht_dfn_mfst LS(LC(LA(MINUS))) LS(LC(LA(EQUAL)))   &kp LS(LC(LA(COMMA)))   &kp LS(LC(LA(F1)))   &kp LS(LC(COMMA))                          &kp LS(LC(F1))      &none
+  &kp LS(LC(I))                          &kp LA(LEFT_BRACKET)                   &kp F4                             &kp LA(F1)                        &kp LS(LC(SLASH))        &ht_dfn_mfst LS(LC(LA(INSERT))) LA(INSERT)                                                                                                &none        &none                                                           &kp LS(LA(SEMI))                                   &td_e_f_expand          &td_e_f_collapse     &kp LS(LC(LA(DOT)))                        &kp LS(LC(LA(P)))   &none
+  &kp LS(LC(LA(O)))                      &kp LS(LC(LA(C)))                      &kp LS(LC(LA(Z)))                  &kp LC(Y)                         &kp LC(SLASH)                                                                                                      &kp F5   &ht_dfn_mfst LS(LC(LA(F10))) LS(F10)   &none        &none   &none           &kp LS(LC(GRAVE))                                                                          &none                   &none                &none                                      &none               &none
+//    ┌───────────────┬─────────────────┬─────────────────┬───────────┬───────────────┬─────────────┬────────────────┐                                                ┌───────────┬────────────┬─────────────────┬───────────────────┬───────────────┬───────────┬─────┐
+//    │     build     │      cmake      │       run       │    f8     │   step into   │ breakpoint  │ del breakpoint │                                                │   exit    │ close proj │                 │                   │               │           │     │
+//    ├───────────────┼─────────────────┼─────────────────┼───────────┼───────────────┼─────────────┼────────────────┤                                                ├───────────┼────────────┼─────────────────┼───────────────────┼───────────────┼───────────┼─────┤
+//    │   splitter    │   file struct   │    generate     │  method   │   refactor    │ clone caret │  toggle case   │                                                │    vim    │   carets   │   git commit    │   git rollback    │ git diff/hist │ submit db │     │
+//    ├───────────────┼─────────────────┼─────────────────┼───────────┼───────────────┼─────────────┼────────────────┤    ┌───────┬──────┬─────┬──────────┐           ├───────────┼────────────┼─────────────────┼───────────────────┼───────────────┼───────────┼─────┤
+//    │ match bracket │ surround/live t │  hide toolbars  │ edit loc  │   reformat    │  bookmarks  │   scroll to    │    │ debug │ stop │     │ settings │           │ soft wrap │ font size  │ mouse & scrl up │ mouse & scrl down │    scrl up    │ scrl down │     │
+//    ├───────────────┼─────────────────┼─────────────────┼───────────┼───────────────┼─────────────┼────────────────┘    └───────┼──────┼─────┼──────────┘           └───────────┼────────────┼─────────────────┼───────────────────┼───────────────┼───────────┼─────┤
+//    │   quick def   │   find usage    │       f4        │ select in │ block comment │ scratch/new │                             │      │     │                                  │ compare f  │   fold expand   │   fold collapse   │  fold select  │  extend   │     │
+//    ├───────────────┼─────────────────┼─────────────────┼───────────┼───────────────┼─────────────┘                ┌────┬───────┼──────┼─────┼──────────┬───────────┐           └────────────┼─────────────────┼───────────────────┼───────────────┼───────────┼─────┤
+//    │  hidden tabs  │    copy path    │ reop closed tab │ del line  │    comment    │                              │ f5 │  run  │      │     │          │ edit conf │                        │                 │                   │               │           │     │
+//    └───────────────┴─────────────────┴─────────────────┴───────────┴───────────────┘                              └────┴───────┴──────┴─────┴──────────┴───────────┘                        └─────────────────┴───────────────────┴───────────────┴───────────┴─────┘
       >;
     };
   };
@@ -680,7 +687,7 @@
 &mmv_input_listener {
     turbo_cursor {
         layers = <L_MOUSE_TRB>;
-        input-processors = <&zip_xy_scaler 5 1>;
+        input-processors = <&zip_xy_scaler 4 1>;
     };
 };
 &msc_input_listener {
